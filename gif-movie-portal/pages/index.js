@@ -5,10 +5,20 @@ import React, { useEffect, useState } from 'react';
 
 export default function Home() {
 
-  //5
-  const [walletAddress, setWalletAddress] = useState(null);
-
   //1
+  const MOVIES = [
+    'https://bit.ly/3Jb3ae2',
+    'https://bit.ly/3NOj69w'
+  ]
+
+  const [walletAddress, setWalletAddress] = useState(null);
+  //5
+  const [inputValue, setInputValue] = useState('');
+
+  //9
+  const [gifList, setGifList] = useState([]);
+
+
   const checkIfWalletIsConnected = async () => {
     try {
       const { solana } = window;
@@ -17,15 +27,15 @@ export default function Home() {
         if (solana.isPhantom) {
           console.log('Phantom wallet was found!');
 
-          //3
+
           const response = await solana.connect({ onlyIfTrusted: true });
           console.log(
             'Connected with Public Key:',
             response.publicKey.toString()
           );
-          //6
+
           setWalletAddress(response.publicKey.toString());
-        } //3
+        }
 
       } else {
         alert('Solana object not found! Install a Phantom Wallet 👻');
@@ -36,6 +46,55 @@ export default function Home() {
   };
 
   //2
+  const renderConnectedContainer = () => (
+    <div className="connected-container">
+      {/* 4 */}
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          //8
+          sendGif();
+        }}
+      >
+        <input type="text" placeholder="Ingresa tu película favorita"
+          value={inputValue}
+          onChange={onInputChange} />
+
+        <button type="submit" className="cta-button submit-gif-button">Enter</button>
+      </form>
+        {/* END 4 */}
+      <div className="gif-grid">
+        {/* 11 
+        {gifList.map((gif) => (
+        */}
+        {MOVIES.map(gif => (
+          <div className="gif-item" key={gif}>
+            <img src={gif} alt={gif} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  //6
+  const onInputChange = (event) => {
+    const { value } = event.target;
+    setInputValue(value);
+  };
+
+  //7
+  const sendGif = async () => {
+    if (inputValue.length > 0) {
+      console.log('Gif link:', inputValue);
+      //12
+      setGifList([...gifList, inputValue]);
+      setInputValue('');
+    } else {
+      console.log('Empty input. Try again.');
+    }
+  };
+
+
   useEffect(() => {
     const onLoad = async () => {
       await checkIfWalletIsConnected();
@@ -44,11 +103,20 @@ export default function Home() {
     return () => window.removeEventListener('load', onLoad);
   }, []);
 
+  //10
+  useEffect(() => {
+    if (walletAddress) {
+      console.log('Fetching Movie list...');
 
-  //4
+      setGifList(MOVIES);
+    }
+  }, [walletAddress]);
+
+
+
   const connectWallet = async () => {
 
-    //8
+
     const { solana } = window;
 
     if (solana) {
@@ -66,7 +134,7 @@ export default function Home() {
       Conectarse a la Wallet
     </button>
   );
-  //4
+
 
   return (
 
@@ -77,8 +145,9 @@ export default function Home() {
           <p className="sub-text">
             Colección de las películas favoritas de plazinautas ✨
           </p>
-          {/*7*/}
           {!walletAddress && renderNotConnectedContainer()}
+          {/* 3 */}
+          {walletAddress && renderConnectedContainer()}
         </div>
       </div>
     </div>
