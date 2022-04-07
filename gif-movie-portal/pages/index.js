@@ -60,7 +60,7 @@ export default function Home() {
 
   const renderNotConnectedContainer = () => (
     <button
-      className="cta-button connect-wallet-button"
+      className="sol-cta-button sol-connect-wallet-button"
       onClick={connectWallet}
     >
       Conectarse a la Wallet
@@ -70,12 +70,12 @@ export default function Home() {
 
   return (
 
-    <div className="App">
-      <div className="container">
+    <div className="app">
+      <div className="main-container">
         <div className="header-container">
-          <p className="header"> 🎞️ Portal Películas Favoritas</p>
+          <p className="header"> 🎞️  Películas Favoritas</p>
           <p className="sub-text">
-            Colección de las películas favoritas de plazinautas ✨
+            Colección de las películas favoritas de plazinautas
           </p>
           {/*7*/}
           {!walletAddress && renderNotConnectedContainer()}
