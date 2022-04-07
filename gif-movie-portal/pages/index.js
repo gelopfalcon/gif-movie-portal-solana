@@ -4,12 +4,12 @@ import Image from 'next/image'
 export default function Home() {
   return (
     
-    <div className="App">
-      <div className="container">
+    <div className="app">
+      <div className="main-container">
         <div className="header-container">
-        <p className="header"> 🎞️ Portal Películas Favoritas</p>
+        <p className="header"> 🎞️ Películas Favoritas</p>
           <p className="sub-text">
-            Colección de las películas favoritas de plazinautas ✨
+            Colección de películas favoritas de plazinautas
           </p>
         </div>
       </div>
