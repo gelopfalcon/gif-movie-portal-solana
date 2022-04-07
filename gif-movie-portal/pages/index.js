@@ -47,7 +47,7 @@ export default function Home() {
 
   //2
   const renderConnectedContainer = () => (
-    <div className="connected-container">
+    <div className="sol-connected-container">
       {/* 4 */}
       <form
         onSubmit={(event) => {
@@ -60,15 +60,15 @@ export default function Home() {
           value={inputValue}
           onChange={onInputChange} />
 
-        <button type="submit" className="cta-button submit-gif-button">Enter</button>
+        <button type="submit" className="sol-cta-button sol-submit-gif-movie-button">Enter</button>
       </form>
         {/* END 4 */}
-      <div className="gif-grid">
+      <div className="sol-gif-grid-movies">
         {/* 11 
         {gifList.map((gif) => (
         */}
         {MOVIES.map(gif => (
-          <div className="gif-item" key={gif}>
+          <div className="sol-gif-movie" key={gif}>
             <img src={gif} alt={gif} />
           </div>
         ))}
@@ -128,7 +128,7 @@ export default function Home() {
 
   const renderNotConnectedContainer = () => (
     <button
-      className="cta-button connect-wallet-button"
+      className="sol-cta-button sol-connect-wallet-button"
       onClick={connectWallet}
     >
       Conectarse a la Wallet
@@ -138,12 +138,12 @@ export default function Home() {
 
   return (
 
-    <div className="App">
-      <div className="container">
+    <div className="app">
+      <div className="main-container">
         <div className="header-container">
-          <p className="header"> 🎞️ Portal Películas Favoritas</p>
+          <p className="header"> 🎞️ Películas Favoritas</p>
           <p className="sub-text">
-            Colección de las películas favoritas de plazinautas ✨
+            Colección de las películas favoritas de plazinautas
           </p>
           {!walletAddress && renderNotConnectedContainer()}
           {/* 3 */}
