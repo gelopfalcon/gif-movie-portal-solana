@@ -14,24 +14,14 @@ export default function Home() {
   const [inputValue, setInputValue] = useState('');
 
   const [gifList, setGifList] = useState([]);
-
-  // 1- Get our program's id from the IDL file.
 const programID = new PublicKey(IDL.metadata.address);
 
-
-
-// 2- SystemProgram is a reference to the Solana runtime!
 const { SystemProgram, Keypair } = web3;
-
-// 3- Set our network to devnet.
 const network = clusterApiUrl('devnet');
-
-// 4- Controls how we want to acknowledge when a transaction is "done".
 const opts = {
   preflightCommitment: "processed"
 }
 
-//5
 
 const getProvider = () => {
   const connection = new Connection(network, opts.preflightCommitment);
@@ -41,9 +31,6 @@ const getProvider = () => {
   return provider;
 }
 
-
-
-//6
 const stringToBytes = (input) => {
   return new TextEncoder().encode(input);
 };
@@ -60,8 +47,6 @@ const stringToBytes = (input) => {
 
 
           const response = await solana.connect({ onlyIfTrusted: true });
-          var provider = getProvider();
-          var program = new Program(IDL, programID, provider);
           setWalletAddress(response.publicKey.toString());
         }
 
@@ -89,8 +74,8 @@ const stringToBytes = (input) => {
       </form>
       <div className="sol-gif-grid-movies">
         {gifList.map(gif => (
-          <div className="sol-gif-movie" key={gif}>
-            <img src={gif} alt={gif} />
+          <div className="sol-gif-movie" key={gif.account.gifUrl}>
+            <img src={gif.account.gifUrl} alt={gif.account.gifUrl} />
           </div>
         ))}
       </div>
@@ -107,10 +92,7 @@ const stringToBytes = (input) => {
   const sendGif = async () => {
     if (inputValue.length > 0) {
       console.log('Gif link:', inputValue);
-    
-      setGifList([...gifList, inputValue]);
 
-      //7
       var provider = getProvider();
       var program = new Program(IDL, programID, provider);
       const [pda] = await PublicKey.findProgramAddress(
@@ -129,7 +111,11 @@ const stringToBytes = (input) => {
         systemProgram: SystemProgram.programId,
       },
     });
-      setInputValue('');
+
+    //3
+    getMovieList();
+
+    setInputValue('');
     } else {
       console.log('Empty input. Try again.');
     }
@@ -149,7 +135,8 @@ const stringToBytes = (input) => {
     if (walletAddress) {
       console.log('Fetching Movie list...');
 
-      setGifList(MOVIES);
+//1
+  getMovieList()
     }
   }, [walletAddress]);
 
@@ -175,6 +162,20 @@ const stringToBytes = (input) => {
       Conectarse a la Wallet
     </button>
   );
+
+  const getMovieList = async() => {
+    try {
+      const provider = getProvider();
+      const program = new Program(IDL, programID, provider);
+      const getAllMovies = await program.account.movieGif.all();
+      console.log(getAllMovies[0].account.owner);
+      setGifList(getAllMovies)
+  
+    } catch (error) {
+      console.log("Error in getGifList: ", error)
+      setGifList(null);
+    }
+  }
 
 
   return (
