@@ -135,7 +135,7 @@ const stringToBytes = (input) => {
     if (walletAddress) {
       console.log('Fetching Movie list...');
 
-//1
+//2
   getMovieList()
     }
   }, [walletAddress]);
@@ -162,7 +162,7 @@ const stringToBytes = (input) => {
       Conectarse a la Wallet
     </button>
   );
-
+//1
   const getMovieList = async() => {
     try {
       const provider = getProvider();
