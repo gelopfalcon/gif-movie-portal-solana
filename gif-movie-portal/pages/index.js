@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-
+import {IDL} from '../public/gif_movie_solana';
+import {Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
+import { Program, Provider, web3 } from '@project-serum/anchor';
 
 export default function Home() {
 
@@ -13,6 +15,40 @@ export default function Home() {
 
   const [gifList, setGifList] = useState([]);
 
+  // 1- Get our program's id from the IDL file.
+const programID = new PublicKey(IDL.metadata.address);
+
+
+
+// 2- SystemProgram is a reference to the Solana runtime!
+const { SystemProgram, Keypair } = web3;
+
+// 3- Set our network to devnet.
+const network = clusterApiUrl('devnet');
+
+// 4- Controls how we want to acknowledge when a transaction is "done".
+const opts = {
+  preflightCommitment: "processed"
+}
+
+//5
+
+const getProvider = () => {
+  const connection = new Connection(network, opts.preflightCommitment);
+  const provider = new Provider(
+    connection, window.solana, opts.preflightCommitment,
+  );
+  return provider;
+}
+
+
+
+//6
+const stringToBytes = (input) => {
+  return new TextEncoder().encode(input);
+};
+
+
 
   const checkIfWalletIsConnected = async () => {
     try {
@@ -24,11 +60,8 @@ export default function Home() {
 
 
           const response = await solana.connect({ onlyIfTrusted: true });
-          console.log(
-            'Connected with Public Key:',
-            response.publicKey.toString()
-          );
-
+          var provider = getProvider();
+          var program = new Program(IDL, programID, provider);
           setWalletAddress(response.publicKey.toString());
         }
 
@@ -76,10 +109,31 @@ export default function Home() {
       console.log('Gif link:', inputValue);
     
       setGifList([...gifList, inputValue]);
+
+      //7
+      var provider = getProvider();
+      var program = new Program(IDL, programID, provider);
+      const [pda] = await PublicKey.findProgramAddress(
+      [
+        stringToBytes("gif_account"),
+        provider.wallet.publicKey.toBytes(),
+        stringToBytes(inputValue),
+      ],
+      program.programId
+    );
+
+    await program.rpc.initialize(inputValue, {
+      accounts: {
+        movieGif: pda,
+        user: provider.wallet.publicKey,
+        systemProgram: SystemProgram.programId,
+      },
+    });
       setInputValue('');
     } else {
       console.log('Empty input. Try again.');
     }
+
   };
 
 

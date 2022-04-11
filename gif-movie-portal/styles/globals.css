@@ -111,7 +111,7 @@ body {
 
 .sol-connected-container input[type="text"] {
   display: inline-block;
-  color: white;
+  color: black;
   padding: 10px;
   width: 50%;
   height: 60px;
