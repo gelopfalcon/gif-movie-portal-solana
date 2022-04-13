@@ -124,3 +124,9 @@ body {
 .sol-connected-container button {
   height: 50px;
 }
+
+.sol-show-movies-container {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  float: left;
+}
