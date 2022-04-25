@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { IDL } from "../public/gif_movie_solana";
 import { Connection, PublicKey, clusterApiUrl } from "@solana/web3.js";
 import { Program, Provider, web3 } from "@project-serum/anchor";
+const crypto = require("crypto");
 
 export default function Home() {
   const MOVIES = ["https://bit.ly/3Jb3ae2", "https://bit.ly/3NOj69w"];
@@ -95,6 +96,7 @@ export default function Home() {
 
       var provider = getProvider();
       var program = new Program(IDL, programID, provider);
+
       const [pda] = await PublicKey.findProgramAddress(
         [
           stringToBytes("gif_account"),
@@ -214,9 +216,10 @@ export default function Home() {
           <p className="sub-text">
             Colección de las películas favoritas de plazinautas
           </p>
+          {!walletAddress && renderNotConnectedContainer()}
         </div>
         {walletAddress && showOptionsMovies()}
-        {!walletAddress && renderNotConnectedContainer()}
+
         {walletAddress && renderConnectedContainer()}
       </div>
     </div>
