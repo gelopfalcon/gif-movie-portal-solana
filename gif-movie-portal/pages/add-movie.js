@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { IDL } from "../public/gif_movie_solana";
 import { Connection, PublicKey, clusterApiUrl } from "@solana/web3.js";
 import { Program, Provider, web3 } from "@project-serum/anchor";
+import { useRouter } from "next/router";
+
 export default function AddMovie() {
+  const router = useRouter();
   const [inputMovieValue, setInputMovieValue] = useState("");
   const programID = new PublicKey(IDL.metadata.address);
 
@@ -49,6 +52,7 @@ export default function AddMovie() {
         },
       });
       setInputMovieValue("");
+      router.push("/");
     } else {
       console.log("Empty input. Try again.");
     }
