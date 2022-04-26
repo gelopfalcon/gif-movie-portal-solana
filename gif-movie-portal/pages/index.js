@@ -1,19 +1,14 @@
 import React, { useEffect, useState } from "react";
+
 import { IDL } from "../public/gif_movie_solana";
 import { Connection, PublicKey, clusterApiUrl } from "@solana/web3.js";
 import { Program, Provider, web3 } from "@project-serum/anchor";
-const crypto = require("crypto");
 
 export default function Home() {
-  const MOVIES = ["https://bit.ly/3Jb3ae2", "https://bit.ly/3NOj69w"];
+  const [movies, setMovies] = useState([]);
 
-  const [walletAddress, setWalletAddress] = useState(null);
-  const [inputValue, setInputValue] = useState("");
-
-  const [gifList, setGifList] = useState([]);
   const programID = new PublicKey(IDL.metadata.address);
 
-  const { SystemProgram, Keypair } = web3;
   const network = clusterApiUrl("devnet");
   const opts = {
     preflightCommitment: "processed",
@@ -29,198 +24,32 @@ export default function Home() {
     return provider;
   };
 
-  const stringToBytes = (input) => {
-    return new TextEncoder().encode(input);
-  };
-
-  const checkIfWalletIsConnected = async () => {
-    try {
-      const { solana } = window;
-
-      if (solana) {
-        if (solana.isPhantom) {
-          console.log("Phantom wallet was found!");
-
-          const response = await solana.connect({ onlyIfTrusted: true });
-          setWalletAddress(response.publicKey.toString());
-        }
-      } else {
-        alert("Solana object not found! Install a Phantom Wallet 👻");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const renderConnectedContainer = () => (
-    <div className="sol-connected-container">
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          sendGif();
-        }}
-      >
-        <input
-          type="text"
-          placeholder="Ingresa tu película favorita"
-          value={inputValue}
-          onChange={onInputChange}
-        />
-
-        <button
-          type="submit"
-          className="sol-cta-button sol-submit-gif-movie-button"
-        >
-          Enter
-        </button>
-      </form>
-
-      <div className="sol-gif-grid-movies">
-        {gifList.map((gif) => (
-          <div className="sol-gif-movie" key={gif.account.gifUrl}>
-            <img src={gif.account.gifUrl} alt={gif.account.gifUrl} />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
-  const onInputChange = (event) => {
-    const { value } = event.target;
-    setInputValue(value);
-  };
-
-  const sendGif = async () => {
-    if (inputValue.length > 0) {
-      console.log("Gif link:", inputValue);
-
-      var provider = getProvider();
-      var program = new Program(IDL, programID, provider);
-
-      const [pda] = await PublicKey.findProgramAddress(
-        [
-          stringToBytes("gif_account"),
-          provider.wallet.publicKey.toBytes(),
-          stringToBytes(inputValue),
-        ],
-        program.programId
-      );
-
-      await program.rpc.initialize(inputValue, {
-        accounts: {
-          movieGif: pda,
-          user: provider.wallet.publicKey,
-          systemProgram: SystemProgram.programId,
-        },
-      });
-
-      getMovieList();
-
-      setInputValue("");
-    } else {
-      console.log("Empty input. Try again.");
-    }
-  };
-
-  useEffect(() => {
-    const onLoad = async () => {
-      await checkIfWalletIsConnected();
-    };
-    window.addEventListener("load", onLoad);
-    return () => window.removeEventListener("load", onLoad);
-  }, []);
-
-  useEffect(() => {
-    if (walletAddress) {
-      console.log("Fetching Movie list...");
-
-      getMovieList();
-    }
-  }, [walletAddress]);
-
-  const connectWallet = async () => {
-    const { solana } = window;
-
-    if (solana) {
-      const response = await solana.connect();
-      console.log("Connected with Public Key:", response.publicKey.toString());
-      setWalletAddress(response.publicKey.toString());
-    }
-  };
-
-  const renderNotConnectedContainer = () => (
-    <button
-      className="sol-cta-button sol-connect-wallet-button"
-      onClick={connectWallet}
-    >
-      Conectarse a la Wallet
-    </button>
-  );
-
   const getMovieList = async () => {
     try {
       const provider = getProvider();
       const program = new Program(IDL, programID, provider);
       const getAllMovies = await program.account.movieGif.all();
-      setGifList(getAllMovies);
+      setMovies(getAllMovies);
     } catch (error) {
       console.log("Error in getGifList: ", error);
-      setGifList(null);
+      setMovies(null);
     }
   };
 
-  const getMoviesByOwner = async () => {
-    var provider = getProvider();
-    var program = new Program(IDL, programID, provider);
-
-    const gifsByOwner = await program.account.movieGif.all([
-      {
-        memcmp: {
-          bytes: provider.wallet.publicKey.toBase58(),
-          offset: 8,
-        },
-      },
-    ]);
-
-    console.log(gifsByOwner);
-    setGifList(gifsByOwner);
-  };
-
-  const showOptionsMovies = () => (
-    <div className="sol-show-movies-container">
-      <button
-        onClick={async () => {
-          getMoviesByOwner();
-        }}
-        className="sol-cta-button sol-submit-gif-movie-button"
-      >
-        Ver mis peliculas
-      </button>
-
-      <button
-        onClick={async () => {
-          getMovieList();
-        }}
-        className="sol-cta-button sol-submit-gif-movie-button"
-      >
-        Ver todas las peliculas
-      </button>
-    </div>
-  );
+  useEffect(() => {
+    getMovieList();
+  }, []);
 
   return (
-    <div className="app">
-      <div className="main-container">
-        <div className="header-container">
-          <p className="header"> 🎞️ Películas Favoritas</p>
-          <p className="sub-text">
-            Colección de las películas favoritas de plazinautas
-          </p>
-          {!walletAddress && renderNotConnectedContainer()}
+    <div className="flex justify-center">
+      <div className="px-4" style={{ maxWidth: "1600px" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
+          {movies.map((movie, i) => (
+            <div key={i} className="border shadow rounded-xl overflow-hidden">
+              <img style={{ height: "20rem" }} src={movie.account.gifUrl} />
+            </div>
+          ))}
         </div>
-        {walletAddress && showOptionsMovies()}
-
-        {walletAddress && renderConnectedContainer()}
       </div>
     </div>
   );

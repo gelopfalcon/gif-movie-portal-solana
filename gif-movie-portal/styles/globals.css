@@ -1,36 +1,3 @@
-.app {
-  height: 100vh;
-  overflow: scroll;
-  text-align: center;
-}
-
-.main-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 0 30px 0 30px;
-}
-
-.sol-authed-container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: 30px;
-}
-
-.header {
-  margin: 0;
-  font-size: 50px;
-  font-weight: bold;
-  color: white;
-}
-
-.sub-text {
-  font-size: 25px;
-  color: white;
-}
-
-html,
 body {
   width: 100%;
   height: 100%;
@@ -50,79 +17,12 @@ body {
     background-position: 0% 50%;
   }
 }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-.sol-gradient-text {
-  background: -webkit-linear-gradient(left, #60c657 30%, #35aee2 60%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.sol-cta-button {
-  height: 45px;
-  border: 0;
-  width: auto;
-  padding-left: 40px;
-  padding-right: 40px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  color: white;
-}
-
-.sol-connect-wallet-button {
-  background: -webkit-linear-gradient(left, #60c657, #35aee2);
-  background-size: 200% 200%;
-  animation: gradient-animation 4s ease infinite;
-}
-
-.sol-submit-gif-movie-button {
-  background: -webkit-linear-gradient(left, #4e44ce, #35aee2);
-  background-size: 200% 200%;
-  animation: gradient-animation 4s ease infinite;
-  margin-left: 10px;
-}
-
-.sol-gif-grid-movies {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-  grid-gap: 1.5rem;
-  justify-items: center;
-  margin: 0;
-  padding: 0;
-}
-
-.sol-gif-grid-movies .gif-movie {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  justify-self: center;
-  align-self: center;
-}
-
-.sol-gif-movie img {
-  width: 100%;
-  height: 300px;
-  border-radius: 10px;
-  object-fit: cover;
-}
-
-.sol-connected-container input[type="text"] {
-  display: inline-block;
-  color: black;
-  padding: 10px;
-  width: 50%;
-  height: 60px;
-  font-size: 16px;
-  box-sizing: border-box;
-  border: none;
-  border-radius: 10px;
-  margin: 50px auto;
-}
-
-.sol-connected-container button {
-  height: 50px;
+.link-menu {
+  color: #ffff;
 }
 
 .sol-show-movies-container {
