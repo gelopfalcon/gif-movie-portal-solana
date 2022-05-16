@@ -24,9 +24,12 @@ pub struct Initialize<'info> {
     pub user: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
+
 #[account]
 #[derive(Default)]
 pub struct MovieGif {
     pub owner: Pubkey,
     pub gif_url: String,
 }
+
+
